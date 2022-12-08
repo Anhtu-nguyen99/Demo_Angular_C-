@@ -1,0 +1,255 @@
+<div>
+  <h2 style="text-align: Center;">Treeview</h2> 
+  <p [innerHTML]="test">
+  </p>
+</div>
+
+<div class="container" style="margin-top: 30px;">
+  <!-- toolbar application -->
+  <div #App class="row" >
+    <div class="col-md-12" style="border: solid #000000 2px; padding: 0px 0px; border-radius: 5px;">
+      <kendo-toolbar style="border-radius: 5px; background-color: #FFBF00;">
+        <kendo-toolbar-button 
+          text="Open Application"
+          (click)="PopUpApp()">
+        </kendo-toolbar-button>
+        <kendo-toolbar-button 
+          text="Node List"
+          (click)="PopUp_AddNode()">
+        </kendo-toolbar-button>
+        <kendo-toolbar-button 
+          text="Attribute List"
+          (click)="PopUp_Attr()">
+        </kendo-toolbar-button>
+      </kendo-toolbar>
+      <!-- popup application -->
+      <kendo-popup
+          [anchor]="App"
+          (anchorViewportLeave)="showPopupApp = false"
+          *ngIf="showPopupApp">
+        <kendo-grid [kendoGridBinding]="AppData"
+                    [selectable]="true"
+                    [navigable]="true"
+                    [pageable]="true"
+                    [pageSize]="4"
+                    (remove)="removeHandler($event)"
+                    (cellClick)="selectedRow($event)"
+                    (edit)="editHandler($event)"
+                    (save)="saveHandler($event)"
+                    (cancel)="cancelHandler($event)">
+          <kendo-grid-column field="Application_Name" title="Application Name">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-textbox
+                [(ngModel)]="dataItem.Application_Name"
+                name="Application_Name"
+                required
+              >
+              </kendo-textbox>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-column field="Owner" title="Owner" editor="numeric">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-textbox
+                [(ngModel)]="dataItem.Owner"
+                name="Owner"
+                required
+              >
+              </kendo-textbox>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-command-column title="#">
+            <ng-template kendoGridCellTemplate>
+              <button kendoGridEditCommand [primary]="true">Edit</button>
+              <button kendoGridRemoveCommand>Remove</button>
+              <button kendoGridSaveCommand>
+                Update
+              </button>
+              <button kendoGridCancelCommand>
+                Cancel
+              </button>
+            </ng-template>
+          </kendo-grid-command-column>
+        </kendo-grid>
+        <div >
+          <button kendoButton (click)="TreeAppData()" style="float: right; margin: 20px 10px;">Open</button>
+          <button kendoButton (click)="Popup_CreApp()" style="float: right; margin: 20px 10px;">Create Application</button>
+          <kendo-popup
+            [offset]="offset_App"
+            (anchorViewportLeave)="Popup_CreAdd = false"
+            *ngIf="Popup_CreAdd">
+            <table>
+              <tr>
+                <td>
+                  <label style="margin-top: 27px; margin-left: 10px;">Application Name: </label>
+                </td>
+                <td>
+                  <input type="text" matInput [(ngModel)]="Application_Name" style="border: solid black 1px; margin-top: 20px; margin-right: 10px;">
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <button kendoButton (click)="Create_App()" style="float: right; margin: 20px 10px; padding: 2px 10px;">Save</button>
+                </td>
+              </tr>
+            </table>
+          </kendo-popup>
+        </div>
+      </kendo-popup>
+      <!-- popup node -->
+      <kendo-popup
+          [anchor]="App"
+          (anchorViewportLeave)="show_Popup_AddNod = false"
+          *ngIf="show_Popup_AddNod">
+        <form novalidate #NodeForm="ngForm">
+          <kendo-grid [kendoGridBinding]="NodeData"
+                    [filterable]="true"
+                    [pageable]="true"
+                    [pageSize]="5"
+                    (cellClick)="selectedRow($event)"
+                    (edit)="editHandler($event)"
+                    (save)="saveHandler($event)"
+                    (cancel)="cancelHandler($event)"
+                    (add)="addHandler($event, NodeForm)">
+          <ng-template kendoGridToolbarTemplate>
+            <button kendoGridAddCommand>
+              New Node
+            </button>
+          </ng-template>
+
+          <kendo-grid-column field="Node_Title" title="Node Title">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-textbox
+                [(ngModel)]="dataItem.Node_Title"
+                name="Node_Title"
+                required
+              >
+              </kendo-textbox>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-column field="Node_Type" title="Node Type">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-textbox
+                [(ngModel)]="dataItem.Node_Type"
+                name="Node_Type"
+                required
+              >
+              </kendo-textbox>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-column field="Owner" title="Owner">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-textbox
+                [(ngModel)]="dataItem.Owner"
+                name="Owner"
+                required
+              >
+              </kendo-textbox>
+            </ng-template>
+          </kendo-grid-column>
+          
+          <kendo-grid-column field="Application_Name" title="Application">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-dropdownlist [data]="AppData" [textField]="'Application_Name'" [valueField]="'Application_ID'" [valuePrimitive]="true"
+              [(ngModel)]="selectedApp">
+              </kendo-dropdownlist>
+            </ng-template>
+          </kendo-grid-column>
+
+          <kendo-grid-column field="Node_Parents" title="Node Parents" [editable]="isEdit">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-dropdownlist [data]="NodeData" [textField]="'Node_Parents'" [valueField]="'Node_Parent_ID'" [valuePrimitive]="true"
+              [(ngModel)]="selectedNodeParents">
+              </kendo-dropdownlist>
+            </ng-template>
+          </kendo-grid-column>
+          
+          <kendo-grid-command-column title="#">
+            <ng-template kendoGridCellTemplate>
+              <button kendoGridEditCommand [primary]="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+              </button>
+              <button kendoGridSaveCommand>
+                {{ isNew ? "Add" : "Update" }}
+              </button>
+              <button kendoGridCancelCommand>
+                {{ isNew ? "Discard changes" : "Cancel" }}
+              </button>
+            </ng-template>
+          </kendo-grid-command-column>
+        </kendo-grid>
+        </form>  
+        
+      </kendo-popup>
+      <!-- popup attribute -->
+      <kendo-popup
+          [anchor]="App"
+          (anchorViewportLeave)="showPopupAttr = false"
+          *ngIf="showPopupAttr">
+        <kendo-grid [kendoGridBinding]="AttributeData"
+                    [filterable]="true"
+                    [pageable]="true"
+                    [pageSize]="4"
+                    (cellClick)="selectedRow($event)"
+                    (edit)="editHandler($event)"
+                    (save)="saveHandler($event)"
+                    (cancel)="cancelHandler($event)">
+          <kendo-grid-column field="Attribute_Name" title="Attribute Name">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-textbox
+                [(ngModel)]="dataItem.Attribute_Name"
+                name="Attribute_Name"
+                required
+              >
+              </kendo-textbox>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-column field="Node_Title" title="Node">
+            <ng-template kendoGridEditTemplate let-dataItem="dataItem">
+              <kendo-dropdownlist [data]="NodeData" [textField]="'Node_Title'" [valueField]="'Node_ID'" [valuePrimitive]="true"
+              [(ngModel)]="selectedNode">
+              </kendo-dropdownlist>
+            </ng-template>
+          </kendo-grid-column>
+          <kendo-grid-command-column title="#">
+            <ng-template kendoGridCellTemplate>
+              <button kendoGridEditCommand [primary]="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                  <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+              </button>
+              <!-- <button kendoGridRemoveCommand>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                </svg>
+              </button> -->
+              <button kendoGridSaveCommand>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-square" viewBox="0 0 16 16">
+                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                  <path d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.235.235 0 0 1 .02-.022z"/>
+                </svg>
+              </button>
+              <button kendoGridCancelCommand>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square" viewBox="0 0 16 16">
+                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                  <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
+            </ng-template>
+          </kendo-grid-command-column>
+        </kendo-grid>
+      </kendo-popup>
+    </div>
+  </div>
+  <app-Treeview [treeviewData]="treeviewData"></app-Treeview>
+  
+</div>
+
+
+
+

@@ -1,0 +1,6 @@
+2022-07-13 16:40:28,315 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: https://localhost:5001
+2022-07-13 16:40:28,326 [1] INFO Microsoft.Hosting.Lifetime - Now listening on: http://localhost:5000
+2022-07-13 16:40:28,329 [1] INFO Microsoft.Hosting.Lifetime - Application started. Press Ctrl+C to shut down.
+2022-07-13 16:40:28,331 [1] INFO Microsoft.Hosting.Lifetime - Hosting environment: Development
+2022-07-13 16:40:28,333 [1] INFO Microsoft.Hosting.Lifetime - Content root path: C:\Users\tnguyen694\source\repos\TMS_project\TMS_project
+2022-07-13 16:41:37,572 [6] INFO TMS_project.Business.NodeBusiness - Hello logging world log4net!

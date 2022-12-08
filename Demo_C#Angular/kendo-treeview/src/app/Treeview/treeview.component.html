@@ -1,0 +1,86 @@
+<div class="row" style="margin-top: 10px;">
+<!-- treeview -->
+    <div style="border: solid #000000 2px; padding: 0px 0px; width: 32%; border-radius: 5px;">
+        <kendo-toolbar style="justify-content: center; border-radius: 5px; background-color: #FFBF00; border-bottom: solid #000000 2px;">
+            <kendo-toolbar-button
+            text="Search"
+            (click)="Popup_Search_Node()"
+            ></kendo-toolbar-button>
+            <kendo-toolbar-button
+            text="Expand All"
+            (click)="expandNodes()"
+            ></kendo-toolbar-button>
+            <kendo-toolbar-button
+            text="Collapse All"
+            (click)="Collapse()"
+            ></kendo-toolbar-button>
+            <kendo-toolbar-button
+            text="Remove"
+            (click)="Dialog_Remove_Node()"
+            ></kendo-toolbar-button>   
+        </kendo-toolbar>  
+        
+        <kendo-dialog
+            title="Please confirm"
+            *ngIf="Confirm_Remove_Node"
+            (close)="RemoveNode('cancel')"
+            [minWidth]="250"
+            [width]="450"
+            >
+            <p style="margin: 30px; text-align: center;">
+                Are you sure you want to remove?
+            </p>
+            <kendo-dialog-actions>
+                <button kendoButton (click)="RemoveNode('cancel')">No</button>
+                <button kendoButton (click)="RemoveNode('yes')" themeColor="primary">
+                Yes
+                </button>
+            </kendo-dialog-actions>
+        </kendo-dialog>
+        
+        <div #Search></div>
+        
+        <kendo-popup
+            [anchor]="Search"
+            (anchorViewportLeave)="Popup_Search = false"
+            *ngIf="Popup_Search">
+            <table>
+            <tr>
+                <td>
+                <label style="margin-top: 17px; margin-left: 10px;">Node Name: </label>
+                </td>
+                <td>
+                <input type="text" matInput [(ngModel)]="Node_Search" style="border: solid black 1px; margin-top: 10px; margin-right: 10px;">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                <button kendoButton style="float: right; margin: 10px 10px 20px 0px;" (click)="Search_Node()">Find</button>
+                </td>
+            </tr>
+            </table>       
+        </kendo-popup>
+        
+        <kendo-treeview
+            [nodes]="treeviewData"
+            [textField]="['Node_Title']"
+            childrenField="Node_List"
+            kendoTreeViewHierarchyBinding
+            kendoTreeViewExpandable
+            kendoTreeViewSelectable
+            [expandBy]="'Node_Title'"
+            [(expandedKeys)]="expandedKeys"
+            (selectionChange)="nodeClick($event)"
+            >
+            <ng-template kendoTreeViewNodeTemplate let-dataItem>
+            <span [ngClass]="iconClass(dataItem)"></span>
+            {{ dataItem.Node_Title }}
+            </ng-template>
+        </kendo-treeview>
+    </div>
+    <!-- Node info -->
+    <div style="border: solid black 2px; padding: 0px 10px; width: 67%; margin-left: 1%; border-radius: 5px;">
+        <app-NodeInfor [AttributeInfo]="AttributeInfo" (refresh_Treeview)="refresh_Treeview()"></app-NodeInfor>
+    </div>
+</div>
